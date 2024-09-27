@@ -15,7 +15,7 @@ const PublicLayout = () => {
 			<Stack.Screen
 				name="main"
 				options={{
-					headerTitle: "",
+					headerShown: false, // This will hide the header completely
 				}}
 			/>
 			<Stack.Screen
