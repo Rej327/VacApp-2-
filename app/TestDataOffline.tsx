@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "@clerk/clerk-expo";
+import { store } from "expo-router/build/global-state/router-store";
 
 interface UserData {
 	email: string;
@@ -10,7 +11,7 @@ interface UserData {
 	lastName: string;
 }
 
-const OfflineHome = () => {
+const TestDataOffline = () => {
 	const [storedUserData, setStoredUserData] = useState<UserData | null>(null);
 
 	useEffect(() => {
@@ -26,10 +27,10 @@ const OfflineHome = () => {
 					error
 				);
 			}
-		};
 
-		retrieveUserDataFromLocalStorage();
-	}, []);
+			retrieveUserDataFromLocalStorage();
+		};
+	}, [storedUserData]);
 
 	return (
 		<View
@@ -49,4 +50,4 @@ const OfflineHome = () => {
 	);
 };
 
-export default OfflineHome;
+export default TestDataOffline;

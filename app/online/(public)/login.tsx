@@ -1,3 +1,5 @@
+import Logout from '@/app/LogOut';
+import TestDataOnline from '@/app/TextDataOnline';
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
@@ -34,22 +36,19 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <Spinner visible={loading} />
-
       <TextInput autoCapitalize="none" placeholder="Email or Username" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
       <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
-
       <Button onPress={onSignInPress} title="Login" color={'#6c47ff'}></Button>
-
-      <Link href="/reset" asChild>
+      <Link href="/online/(public)/reset" asChild>
         <Pressable style={styles.button}>
           <Text>Forgot password?</Text>
         </Pressable>
       </Link>
-      <Link href="/register" asChild>
+      <Link href="/online/(public)/register" asChild>
         <Pressable style={styles.button}>
           <Text>Create Account</Text>
         </Pressable>
-      </Link>
+      </Link> 
     </View>
 
 		
@@ -78,3 +77,14 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
+
+// import { View, Text } from 'react-native'
+// import React from 'react'
+
+// export default function Login() {
+//   return (
+//     <View>
+//       <Text>Login</Text>
+//     </View>
+//   )
+// }

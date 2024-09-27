@@ -1,67 +1,57 @@
-import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
-import { Slot, useRouter, useSegments } from 'expo-router';
-import { useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { useEffect, useState } from "react";
+import NetInfo from "@react-native-community/netinfo";
+import { useRouter, Slot, usePathname } from "expo-router"; // Import useRouter
 
-const CLERK_PUBLISHABLE_KEY = 'pk_test_YWRhcHRlZC1vc3ByZXktMjAuY2xlcmsuYWNjb3VudHMuZGV2JA';
-
-const InitialLayout = () => {
-  const { isLoaded, isSignedIn } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
+const RootLayout = () => {
+  const [isOffline, setIsOffline] = useState(false);
+  const router = useRouter(); // Initialize router
+  const path = usePathname(); // Get the current path
 
   useEffect(() => {
-    const checkUserData = async () => {
-      const userData = await SecureStore.getItemAsync('userData'); 
-      return userData !== null;
-    };
+    const checkNetworkStatus = async () => {
+      try {
+        const netInfoState = await NetInfo.fetch();
+        const isConnected = netInfoState.isConnected;
 
-    const redirectUser = async () => {
-      if (!isLoaded) return;
+        setIsOffline(!isConnected);
 
-      const hasUserData = await checkUserData();
-      const inTabsGroup = segments[0] === '(auth)';
+        console.log("My Path", path);
 
-      console.log('User changed: ', isSignedIn);
-
-      if (hasUserData) {
-        router.replace('/home');
-      } else if (isSignedIn && !inTabsGroup) {
-        router.replace('/home');
-      } else if (!isSignedIn) {
-        router.replace('/login');
+        // Use router.replace based on network status
+        if (isConnected) {
+          router.replace("/online");
+        } else {
+          router.replace("/offline");
+        }
+      } catch (error) {
+        console.error("Error checking network status:", error); // Handle any errors
       }
     };
 
-    redirectUser();
-  }, [isSignedIn, isLoaded]);
+    // Initial check
+    checkNetworkStatus();
 
-  return <Slot />;
-};
+    // Subscribe to network changes
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      try {
+        const isConnected = state.isConnected;
+        setIsOffline(!isConnected);
 
-const tokenCache = {
-  async getToken(key: string) {
-    try {
-      return SecureStore.getItemAsync(key);
-    } catch (err) {
-      return null;
-    }
-  },
-  async saveToken(key: string, value: string) {
-    try {
-      return SecureStore.setItemAsync(key, value);
-    } catch (err) {
-      return;
-    }
-  },
-};
+        if (isConnected) {
+          router.replace("/online");
+        } else {
+          router.replace("/offline");
+        }
+      } catch (error) {
+        console.error("Error in network event listener:", error); // Handle any errors
+      }
+    });
 
-const RootLayout = () => {
-  return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
-      <InitialLayout />
-    </ClerkProvider>
-  );
+    // Clean up network listener on unmount
+    return () => unsubscribe();
+  }, [isOffline]); // Add 'path' to dependencies
+
+  return <Slot />; // Slot will render the appropriate layout from online or offline folders
 };
 
 export default RootLayout;
