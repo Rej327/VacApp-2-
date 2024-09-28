@@ -6,35 +6,25 @@ const PublicLayout = () => {
 		<Stack
 			screenOptions={{
 				headerStyle: {
-					backgroundColor: "#6c47ff",
+					backgroundColor: "#87b2bd",
 				},
-				headerTintColor: "#fff",
+				headerTintColor: "#ff",
 				headerBackTitle: "Back",
+				statusBarColor: "#86b3bc",
+				headerShown: false
 			}}
 		>
 			<Stack.Screen
 				name="main"
-				options={{
-					headerShown: false, // This will hide the header completely
-				}}
 			/>
 			<Stack.Screen
 				name="login"
-				options={{
-					headerTitle: "Clerk Auth App",
-				}}
 			/>
 			<Stack.Screen
 				name="register"
-				options={{
-					headerTitle: "Create Account",
-				}}
 			/>
 			<Stack.Screen
 				name="reset"
-				options={{
-					headerTitle: "Reset Password",
-				}}
 			/>
 		</Stack>
 	);

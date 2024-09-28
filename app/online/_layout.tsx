@@ -67,7 +67,7 @@ const tokenCache = {
 const RootLayout = () => {
 	return (
 		<ClerkProvider
-			publishableKey={CLERK_PUBLISHABLE_KEY}
+			publishableKey={CLERK_PUBLISHABLE_KEY!}
 			tokenCache={tokenCache}
 		>
 			<InitialLayout />

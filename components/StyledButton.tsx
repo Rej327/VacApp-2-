@@ -1,5 +1,5 @@
+import React, { forwardRef, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react";
 
 type ButtonProps = {
   title: string;
@@ -10,10 +10,11 @@ type ButtonProps = {
   textColor?: string;
   fontSize?: number;
   borderRadius?: number;
-  customWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'; 
+  customWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 };
 
-const StyledButton: React.FC<ButtonProps> = ({
+// Using forwardRef with 'React.Ref<View>' to pass the ref to the underlying View component
+const StyledButton = forwardRef<React.Ref<View>, ButtonProps>(({
   title,
   onPress,
   style,
@@ -23,27 +24,49 @@ const StyledButton: React.FC<ButtonProps> = ({
   width = '',
   fontSize = 17,
   borderRadius = 20
-}) => {
+}, ref) => {
+  // Use state to manage press effect
+  const [isPressed, setIsPressed] = useState(false);
+
   return (
     <Pressable
+      onPressIn={() => setIsPressed(true)}  // Press effect starts
+      onPressOut={() => setIsPressed(false)} // Press effect ends
       onPress={onPress}
-      style={[styles.button, { backgroundColor: bgColor, width: width, borderRadius: borderRadius }, style]}
+      style={({ pressed }) => [
+        styles.button,
+        {
+          backgroundColor: bgColor,
+          width: width,
+          borderRadius: borderRadius,
+          opacity: pressed ? 0.8 : 1, // Reduce opacity when pressed
+          transform: [{ scale: pressed ? 0.98 : 1 }] // Slight scale-down effect
+        },
+        style
+      ]}
+      ref={ref as any} // Pass ref to Pressable, which ultimately forwards to View
     >
-      <Text style={[styles.text, { color: textColor, fontSize: fontSize, fontWeight: customWeight }]}>{title}</Text>
+      <Text style={[styles.text, { color: textColor, fontSize: fontSize, fontWeight: customWeight }]}>
+        {title}
+      </Text>
     </Pressable>
   );
-};
+});
 
 const styles = StyleSheet.create({
   button: {
-    fontWeight: 'bold',
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     alignItems: "center",
     borderColor: '#456B72',
-    borderWidth: 1
+    borderWidth: 1,
+    justifyContent: 'center',
+    marginVertical: 2
   },
   text: {},
 });
+
+// Give the component a display name for better debugging
+StyledButton.displayName = 'StyledButton';
 
 export default StyledButton;
