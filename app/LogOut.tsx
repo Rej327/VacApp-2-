@@ -3,6 +3,7 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "@clerk/clerk-expo"; // Import Clerk's useAuth hook
 import { useRouter } from "expo-router"; // Import router for navigation
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Logout() {
 	const { signOut } = useAuth(); // Get the signOut method from Clerk
@@ -17,18 +18,15 @@ export default function Logout() {
 			console.log("User signed out and data cleared");
 
 			// Redirect to the login page after sign-out
-			router.replace("/login");
+			router.replace("/online/(public)/main");
 		} catch (error) {
 			console.error("Failed to log out or clear user data:", error);
 		}
 	};
 
 	return (
-		<Pressable
-			className="w-auto flex items-center justify-center bg-red-700 p-2"
-			onPress={handleLogout}
-		>
-			<Text className="text-white">Logout</Text>
-		</Pressable>
+		<Pressable onPress={handleLogout} style={{ marginRight: 10 }}>
+		<Ionicons name="log-out-outline" size={24} color={"#fff"} />
+	</Pressable>
 	);
 }

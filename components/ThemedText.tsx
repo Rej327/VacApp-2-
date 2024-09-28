@@ -3,7 +3,7 @@ import { Text, type TextProps, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedTextProps = TextProps & {
-	type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link";
+	type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link" | "close";
 };
 
 export function ThemedText({
@@ -19,6 +19,7 @@ export function ThemedText({
 				type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
 				type === "subtitle" ? styles.subtitle : undefined,
 				type === "link" ? styles.link : undefined,
+				type === "close" ? styles.close : undefined,
 				style,
 			]}
 			{...rest}
@@ -52,5 +53,10 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: "#456B72",
     fontStyle: "italic"
+	},
+	close: {
+		lineHeight: 30,
+		fontSize: 14,
+		color: "#456B72",
 	},
 });
