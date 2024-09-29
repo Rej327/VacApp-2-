@@ -1,11 +1,37 @@
 import { useEffect, useState } from "react";
 import NetInfo from "@react-native-community/netinfo";
-import { useRouter, Slot, usePathname } from "expo-router"; // Import useRouter
+import { useRouter, Slot } from "expo-router"; // Import useRouter
+import * as Font from "expo-font"; // Import expo-font
+import * as SplashScreen from "expo-splash-screen"; // Import SplashScreen
 
 const RootLayout = () => {
   const [isOffline, setIsOffline] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false); // State to track font loading
   const router = useRouter(); // Initialize router
-  const path = usePathname(); // Get the current path
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      try {
+        // Prevent the splash screen from auto-hiding
+        await SplashScreen.preventAutoHideAsync();
+        
+        // Load the fonts
+        await Font.loadAsync({
+          Roboto: require("../assets/fonts/Roboto-Regular.ttf"), // Load the regular font
+          Oswald: require("../assets/fonts/Oswald-Regular.ttf"), // Load the regular font
+        });
+
+        setFontsLoaded(true); // Set fonts loaded state
+      } catch (error) {
+        console.error("Error loading fonts:", error); // Handle font loading errors
+      } finally {
+        // Hide the splash screen after loading fonts
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    loadFonts();
+  }, []);
 
   useEffect(() => {
     const checkNetworkStatus = async () => {
@@ -14,8 +40,6 @@ const RootLayout = () => {
         const isConnected = netInfoState.isConnected;
 
         setIsOffline(!isConnected);
-
-        console.log("My Path", path);
 
         // Use router.replace based on network status
         if (isConnected) {
@@ -33,23 +57,19 @@ const RootLayout = () => {
 
     // Subscribe to network changes
     const unsubscribe = NetInfo.addEventListener((state) => {
-      try {
-        const isConnected = state.isConnected;
-        setIsOffline(!isConnected);
+      const isConnected = state.isConnected;
+      setIsOffline(!isConnected);
 
-        if (isConnected) {
-          router.replace("/online");
-        } else {
-          router.replace("/offline");
-        }
-      } catch (error) {
-        console.error("Error in network event listener:", error); // Handle any errors
+      if (isConnected) {
+        router.replace("/online");
+      } else {
+        router.replace("/offline");
       }
     });
 
     // Clean up network listener on unmount
     return () => unsubscribe();
-  }, [isOffline]); // Add 'path' to dependencies
+  }, []); // No need for 'isOffline' in dependencies
 
   return <Slot />; // Slot will render the appropriate layout from online or offline folders
 };

@@ -27,16 +27,13 @@ const TabsPage = () => {
 		<>
 			{/* <StatusBar barStyle="light-content" backgroundColor="#86b3bc" /> */}
 			<Tabs
-			
 				screenOptions={{
-					
 					headerStyle: {
 						backgroundColor: "#86b3bc",
 					},
 					tabBarShowLabel: false,
 					tabBarActiveTintColor: "#456B72", // Color when tab is selected
 					tabBarInactiveTintColor: "#456B72", // Color when tab is not selected
-					
 				}}
 			>
 				{/* HOME */}

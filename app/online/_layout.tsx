@@ -3,9 +3,7 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 import * as SecureStore from "expo-secure-store";
-
-const CLERK_PUBLISHABLE_KEY =
-	"pk_test_YWRhcHRlZC1vc3ByZXktMjAuY2xlcmsuYWNjb3VudHMuZGV2JA";
+import Constants from "expo-constants"; // Import to access Expo's extra configuration
 
 const InitialLayout = () => {
 	const { isLoaded, isSignedIn } = useAuth();
@@ -26,7 +24,6 @@ const InitialLayout = () => {
 		redirectUser();
 	}, [isSignedIn, isLoaded]);
 
-	// Show loading message if Clerk is not yet loaded
 	if (!isLoaded) {
 		return (
 			<View
@@ -41,12 +38,11 @@ const InitialLayout = () => {
 		);
 	}
 
-	return <Slot />; // Slot will render the appropriate layout based on routing
+	return <Slot />;
 };
 
 const tokenCache = {
 	async getToken(key: string): Promise<string | null> {
-		// Specify the parameter type and return type
 		try {
 			return await SecureStore.getItemAsync(key);
 		} catch (err) {
@@ -55,7 +51,6 @@ const tokenCache = {
 		}
 	},
 	async saveToken(key: string, value: string): Promise<void> {
-		// Specify the parameter types and return type
 		try {
 			await SecureStore.setItemAsync(key, value);
 		} catch (err) {
@@ -65,9 +60,13 @@ const tokenCache = {
 };
 
 const RootLayout = () => {
+	
+	const CLERK_PUBLISHABLE_KEY =
+		Constants?.expoConfig?.extra?.clerkPublishableKey || "Fallback_Key";
+
 	return (
 		<ClerkProvider
-			publishableKey={CLERK_PUBLISHABLE_KEY!}
+			publishableKey={CLERK_PUBLISHABLE_KEY}
 			tokenCache={tokenCache}
 		>
 			<InitialLayout />
