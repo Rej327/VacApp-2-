@@ -6,12 +6,13 @@ export type ThemedTextProps = TextProps & {
 	type?:
 		| "default"
 		| "title"
-		| "defaultSemiBold"
+		| "cardHeader"
 		| "subtitle"
 		| "link"
 		| "close"
 		| "header"
-		| "cardTitle";
+		| "cardTitle"
+		| "navigation";
 };
 
 export function ThemedText({
@@ -24,12 +25,13 @@ export function ThemedText({
 			style={[
 				type === "default" ? styles.default : undefined,
 				type === "title" ? styles.title : undefined,
-				type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
+				type === "cardHeader" ? styles.cardHeader : undefined,
 				type === "subtitle" ? styles.subtitle : undefined,
 				type === "link" ? styles.link : undefined,
 				type === "close" ? styles.close : undefined,
 				type === "header" ? styles.header : undefined,
 				type === "cardTitle" ? styles.cardTitle : undefined,
+				type === "navigation" ? styles.navigation : undefined,
 				style,
 			]}
 			{...rest}
@@ -39,13 +41,17 @@ export function ThemedText({
 
 const styles = StyleSheet.create({
 	default: {
-		fontSize: 16,
+		fontSize: 14
+		,
 		lineHeight: 24,
+		fontFamily: "Roboto",
 	},
-	defaultSemiBold: {
+	cardHeader: {
 		fontSize: 16,
 		lineHeight: 24,
-		fontWeight: "600",
+		fontWeight: "bold",
+		color: "#2B2B2B",
+		fontFamily: "RobotoBold",
 	},
 	title: {
 		fontSize: 26,
@@ -59,7 +65,6 @@ const styles = StyleSheet.create({
 		color: "#456B72",
 	},
 	link: {
-		lineHeight: 30,
 		fontSize: 14,
 		color: "#456B72",
 		fontStyle: "italic",
@@ -82,9 +87,15 @@ const styles = StyleSheet.create({
 		textAlign: "left",
 		lineHeight: 30,
 		fontSize: 15,
-		fontWeight: "600",
+		// fontWeight: "bold",
 		color: "#2B2B2B",
 		marginVertical: 5,
 		fontFamily: "Oswald",
+	},
+	navigation: {
+		textAlign: "left",
+		fontSize: 18,
+		fontWeight: "500",
+		color: "#373938",
 	},
 });

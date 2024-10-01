@@ -52,7 +52,7 @@ const Login = () => {
 		<>
 			<CustomHeadFoot />
 			<View style={styles.container}>
-				<Spinner visible={loading} />
+				<Spinner color="#456B72" visible={loading} />
 
 				<View style={{ alignItems: "center" }}>
 					<Image

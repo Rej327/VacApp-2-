@@ -18,6 +18,7 @@ const RootLayout = () => {
         // Load the fonts
         await Font.loadAsync({
           Roboto: require("../assets/fonts/Roboto-Regular.ttf"), // Load the regular font
+          RobotoBold: require("../assets/fonts/Roboto-Bold.ttf"), // Load the regular font
           Oswald: require("../assets/fonts/Oswald-Regular.ttf"), // Load the regular font
         });
 
