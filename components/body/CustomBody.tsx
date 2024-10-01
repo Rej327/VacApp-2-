@@ -1,11 +1,22 @@
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
-import React, { ReactNode } from "react";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	Image,
+	Alert,
+	StyleSheet,
+} from "react-native";
+import React, { ReactNode, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
-import { circleBg } from "@/assets";
+import { circleBg, healthTips } from "@/assets";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import BottomSheet, {
+	BottomSheetScrollView,
+	BottomSheetView,
+} from "@gorhom/bottom-sheet";
 
 interface CustomBodyProps {
 	children: ReactNode;
@@ -13,6 +24,8 @@ interface CustomBodyProps {
 	backRoute: string;
 	url: string;
 	fileName: string;
+	headerImage: object;
+	headerImageStyle: string;
 }
 
 const CustomBody: React.FC<CustomBodyProps> = ({
@@ -21,6 +34,8 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 	backRoute,
 	url,
 	fileName,
+	headerImage,
+	headerImageStyle,
 }) => {
 	const router = useRouter();
 
@@ -41,7 +56,10 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 			if (await Sharing.isAvailableAsync()) {
 				await Sharing.shareAsync(uri);
 			} else {
-				Alert.alert("Downloaded", "File downloaded but sharing is unavailable.");
+				Alert.alert(
+					"Downloaded",
+					"File downloaded but sharing is unavailable."
+				);
 			}
 		} catch (error) {
 			console.error("Error downloading file", error);
@@ -49,10 +67,19 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 		}
 	};
 
+	const bottomSheetRef = useRef<BottomSheet>(null);
+
+	// Define snap points using useMemo
+	const snapPoints = useMemo(() => ["65%", "90%"], []);
+
+	// Callbacks
+	// const handleSheetChanges = useCallback((index: number) => {
+	// 	console.log("handleSheetChanges", index);
+	// }, []);
 
 	return (
-    <View className="relative bg-[#86b3bc] h-full">
-      {/* Back Button */}
+		<View className="relative bg-[#86b3bc] h-full">
+			{/* Back Button */}
 			<View className="absolute z-10 top-2 flex flex-row justify-between w-full px-2">
 				<TouchableOpacity onPress={handleBackPress}>
 					<View className="flex flex-row items-center gap-2">
@@ -71,18 +98,63 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 					</View>
 				</TouchableOpacity>
 			</View>
-			
 
-      {/* Background Graphics */}
-      <Image source={circleBg} className="absolute top-0 -right-10 h-52 w-52" />
-      <Image source={circleBg} className="absolute top-40 -left-5 h-32 w-32" />
-      <Image source={circleBg} className="absolute top-56 right-0 h-20 w-20" />
-      <Image source={circleBg} className="absolute top-72 -left-5 h-44 w-44" />
+			{/* Background Graphics */}
+			<Image
+				source={circleBg}
+				className="absolute top-0 -right-10 h-52 w-52"
+			/>
+			<Image
+				source={circleBg}
+				className="absolute top-40 -left-5 h-32 w-32"
+			/>
+			<Image
+				source={circleBg}
+				className="absolute top-56 right-0 h-20 w-20"
+			/>
+			<Image
+				source={circleBg}
+				className="absolute top-72 -left-5 h-44 w-44"
+			/>
 
-      {/* Screen Content */}
-      <View className="mt-10">{children}</View>
-    </View>
-  );
+			<Image
+				source={headerImage}
+				className={`top-10 ${headerImageStyle}`}
+			/>
+
+			{/* Screen Content */}
+			<View style={styles.container}>
+				<BottomSheet
+					ref={bottomSheetRef}
+					// onChange={handleSheetChanges}
+					snapPoints={snapPoints}
+					handleStyle={{
+						backgroundColor: "#f5f4f7",
+						borderTopEndRadius: 10,
+						borderTopStartRadius: 10,
+					}}
+					backgroundStyle={{backgroundColor: '#f5f4f7'}}
+					handleIndicatorStyle={{backgroundColor: '#456B72'}}
+				>
+					<BottomSheetScrollView
+						contentContainerStyle={styles.contentContainer}
+					>
+						{children}
+					</BottomSheetScrollView>
+				</BottomSheet>
+			</View>
+		</View>
+	);
 };
 
 export default CustomBody;
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		padding: 24,
+	},
+	contentContainer: {
+		backgroundColor: "#f5f4f7",
+	},
+});

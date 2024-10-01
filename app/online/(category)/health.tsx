@@ -37,6 +37,8 @@ export default function Health() {
 		<CustomBody
 			backRoute="/online/(auth)/home"
 			title="Health"
+			headerImage={healthTips}
+			headerImageStyle="absolute w-72 h-72 mx-auto left-[15%]"
 			fileName="Baby Health Tips.pdf"
 			url="https://drive.google.com/uc?export=download&id=1qBQb_IPfNDtu7SX8Q1yoF1YJLO96tlmD"
 		>
@@ -46,11 +48,7 @@ export default function Health() {
 				</View>
 			) : (
 				<>
-					<Image
-						source={healthTips}
-						className="absolute w-72 h-72 mx-auto left-[15%]"
-					/>
-					<ScrollView className="bg-[#f5f4f7] mt-[62%] h-auto rounded-t-2xl p-4">
+					<ScrollView className="rounded-t-2xl p-4">
 						<View className="rounded-xl overflow-hidden">
 							{data.map((item, index) => (
 								<Collapsible

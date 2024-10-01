@@ -12,7 +12,8 @@ export type ThemedTextProps = TextProps & {
 		| "close"
 		| "header"
 		| "cardTitle"
-		| "navigation";
+		| "navigation"
+		| "date";
 };
 
 export function ThemedText({
@@ -32,6 +33,7 @@ export function ThemedText({
 				type === "header" ? styles.header : undefined,
 				type === "cardTitle" ? styles.cardTitle : undefined,
 				type === "navigation" ? styles.navigation : undefined,
+				type === "date" ? styles.date : undefined,
 				style,
 			]}
 			{...rest}
@@ -41,9 +43,9 @@ export function ThemedText({
 
 const styles = StyleSheet.create({
 	default: {
-		fontSize: 14
-		,
+		fontSize: 14,
 		lineHeight: 24,
+		color: "#2B2B2B",
 		fontFamily: "Roboto",
 	},
 	cardHeader: {
@@ -69,6 +71,12 @@ const styles = StyleSheet.create({
 		color: "#456B72",
 		fontStyle: "italic",
 	},
+	date: {
+		fontSize: 14,
+		color: "#2B2B2B",
+		fontWeight: "bold",
+		fontFamily: 'RobotoBold'
+	},
 	close: {
 		lineHeight: 30,
 		fontSize: 14,
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
 		textAlign: "left",
 		lineHeight: 30,
 		fontSize: 18,
-		letterSpacing: 1,
+		fontFamily: "RobotoBold",
 		fontWeight: "500",
 		color: "#111d1f",
 		marginVertical: 5,

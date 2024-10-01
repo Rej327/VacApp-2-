@@ -1,7 +1,7 @@
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants"; // Import to access Expo's extra configuration
 
@@ -26,14 +26,8 @@ const InitialLayout = () => {
 
 	if (!isLoaded) {
 		return (
-			<View
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
-				<Text>Loading...</Text>
+			<View className="flex -mt-10 items-center justify-center h-full">
+				<ActivityIndicator size="large" color="#456B72" />
 			</View>
 		);
 	}
@@ -60,7 +54,6 @@ const tokenCache = {
 };
 
 const RootLayout = () => {
-	
 	const CLERK_PUBLISHABLE_KEY =
 		Constants?.expoConfig?.extra?.clerkPublishableKey || "Fallback_Key";
 

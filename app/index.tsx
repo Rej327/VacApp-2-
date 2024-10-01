@@ -48,11 +48,16 @@ export default function StartPage() {
 					flex: 1,
 					justifyContent: "center",
 					alignItems: "center",
-					paddingBottom: 50,
 					gap: 10,
 				}}
 			>
-				<View style={{ marginBottom: 10, alignItems: "center" }}>
+				<View
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
 					<Image
 						source={babyIcon}
 						style={{ width: 100, height: 100 }}
@@ -66,23 +71,9 @@ export default function StartPage() {
 					>
 						Know More, Care Better!
 					</Text>
-				</View>
-				<View
-					style={{
-						flex: 1,
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
-					<ActivityIndicator size="large" color="#456B72" />
+					<ActivityIndicator className="mt-4" size="large" color="#456B72" />
 				</View>
 
-				<View style={{ flex: 1, justifyContent: "center" }}>
-					<Image
-						source={babyIcon}
-						style={{ width: 75, height: 75 }}
-					/>
-				</View>
 				<Image
 					source={mainBottom}
 					style={{

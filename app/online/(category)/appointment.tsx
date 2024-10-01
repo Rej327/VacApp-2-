@@ -3,8 +3,10 @@ import React from "react";
 
 export default function Appointment() {
 	return (
-		<View className="flex justify-center items-center">
-			<Text>Appointment</Text>
-		</View>
+
+			<View className="flex justify-center items-center">
+				<Text>Appointment</Text>
+			</View>
+	
 	);
 }

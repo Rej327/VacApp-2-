@@ -17,6 +17,7 @@ import {
 	vaccinationGuide,
 } from "@/assets/data/data";
 import { Link } from "expo-router";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 // Define a type for health tips data
 interface HealthTip {
@@ -70,6 +71,8 @@ export default function Guide() {
 		<CustomBody
 			backRoute="/online/(auth)/home"
 			title="Guide"
+			headerImage={guide}
+			headerImageStyle="absolute w-80 h-60 mx-auto left-[10%]"
 			fileName="Baby Vaccination Guide.pdf"
 			url="https://drive.google.com/uc?export=download&id=13MPmCqXxWlWIpp94IOD9iKt2P9emzghg"
 		>
@@ -79,19 +82,14 @@ export default function Guide() {
 				</View>
 			) : (
 				<>
-					<Image
-						source={guide}
-						className="absolute w-80 h-60 mx-auto left-[10%]"
-					/>
 					<ScrollView
 						showsVerticalScrollIndicator={false}
-						className="bg-[#f5f4f7] mt-60 h-auto rounded-t-2xl px-4"
+						className="bg-[#f5f4f7] h-auto rounded-t-2xl px-4"
 					>
-						<ScrollView
+						<BottomSheetScrollView
 							horizontal={true}
 							showsHorizontalScrollIndicator={false}
 							snapToInterval={320}
-							decelerationRate="fast"
 							pagingEnabled={true}
 							className="mt-4"
 						>
@@ -119,7 +117,7 @@ export default function Guide() {
 									</ThemedText>
 								</View>
 							))}
-						</ScrollView>
+						</BottomSheetScrollView>
 						{/* Add the vaccination guide here */}
 						<View className="mt-4">
 							<ThemedText type="header" className="mb-2">

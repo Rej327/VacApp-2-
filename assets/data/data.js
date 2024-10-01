@@ -283,3 +283,34 @@ export const vaccinationGuide = [
 		],
 	},
 ];
+
+
+
+//mockdata
+export const milestones = [
+	{
+		header: "Lorem, ipsum.",
+		description:
+			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, commodi.",
+		date: "01/25/2024",
+	},
+	{
+		header: "Another Milestone",
+		description: "Details about another milestone.",
+		date: "02/01/2024",
+	},
+];
+
+export const events = [
+	{
+		header: "Lorem, ipsum.",
+		description:
+			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, commodi.",
+		date: "01/25/2024",
+	},
+	{
+		header: "Another Events",
+		description: "Details about another Events.",
+		date: "02/01/2024",
+	},
+];
