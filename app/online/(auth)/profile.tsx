@@ -1,86 +1,30 @@
-import { View, Text, Button, TextInput, StyleSheet } from "react-native";
-import { useState } from "react";
+import { View, Image } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
+import { ThemedText } from "@/components/ThemedText";
+import { ScrollView } from "react-native-gesture-handler";
+import CustomCard from "@/components/CustomCard";
+import ProfileInformation from "@/components/profile/ProfileInformation";
+import MyBaby from "@/components/profile/MyBaby";
+import Notification from "@/components/profile/Notification";
 
 const Profile = () => {
 	const { user } = useUser();
-	const [firstName, setFirstName] = useState(user?.firstName ?? "");
-	const [lastName, setLastName] = useState(user?.lastName ?? "");
-
-	const onSaveUser = async () => {
-		try {
-			// This is not working!
-			const result = await user?.update({
-				firstName: firstName,
-				lastName: lastName,
-			});
-			console.log(
-				"🚀 ~ file: profile.tsx:16 ~ onSaveUser ~ result:",
-				result
-			);
-		} catch (e) {
-			console.log(
-				"🚀 ~ file: profile.tsx:18 ~ onSaveUser ~ e",
-				JSON.stringify(e)
-			);
-		}
-	};
 
 	return (
-		<View style={styles.container}>
-			<Text style={{ textAlign: "center" }}>
-				Good morning {user?.firstName} {user?.lastName}!
-			</Text>
+		<ScrollView keyboardDismissMode="on-drag">
+			<View className="bg-[#86b3bc] w-auto h-10" />
 
-			<TextInput
-				placeholder="First Name"
-				value={firstName}
-				onChangeText={setFirstName}
-				style={styles.inputField}
-			/>
-			<TextInput
-				placeholder="Last Name"
-				value={lastName}
-				onChangeText={setLastName}
-				style={styles.inputField}
-			/>
-			<Button
-				onPress={onSaveUser}
-				title="Update account"
-				color={"#6c47ff"}
-			></Button>
-		</View>
+			{user && (
+				<Image
+					source={{ uri: user?.imageUrl }} // Use Clerk's profile image URL
+					className="relative mx-auto border-2 -mt-6 mb-4 w-12 h-12 rounded-full"
+				/>
+			)}
+			<ProfileInformation />
+			<MyBaby />
+			<Notification />
+		</ScrollView>
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		padding: 40,
-	},
-	inputField: {
-		marginVertical: 4,
-		height: 50,
-		borderWidth: 1,
-		borderColor: "#6c47ff",
-		borderRadius: 4,
-		padding: 10,
-		backgroundColor: "#fff",
-	},
-});
-
 export default Profile;
-
-// import { View, Text } from 'react-native'
-// import React from 'react'
-
-// const Profile = () => {
-//   return (
-//     <View>
-//       <Text>Profile</Text>
-//     </View>
-//   )
-// }
-
-// export default Profile

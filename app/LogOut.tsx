@@ -15,6 +15,7 @@ export default function Logout() {
 			await signOut();
 			// Optionally clear local storage if needed
 			await AsyncStorage.removeItem("userData");
+			await AsyncStorage.removeItem("babies");
 			console.log("User signed out and data cleared");
 
 			// Redirect to the login page after sign-out
@@ -26,7 +27,7 @@ export default function Logout() {
 
 	return (
 		<Pressable onPress={handleLogout} style={{ marginRight: 10 }}>
-		<Ionicons name="log-out-outline" size={24} color={"#fff"} />
-	</Pressable>
+			<Ionicons name="log-out-outline" size={24} color={"#fff"} />
+		</Pressable>
 	);
 }

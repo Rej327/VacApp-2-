@@ -11,6 +11,7 @@ type ButtonProps = {
   fontSize?: number;
   borderRadius?: number;
   customWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+  paddingVertical?: number;
 };
 
 // Using forwardRef with 'React.Ref<View>' to pass the ref to the underlying View component
@@ -23,7 +24,8 @@ const StyledButton = forwardRef<React.Ref<View>, ButtonProps>(({
   customWeight = '700',
   width = '',
   fontSize = 17,
-  borderRadius = 20
+  borderRadius = 20,
+  paddingVertical= 12,
 }, ref) => {
   // Use state to manage press effect
   const [isPressed, setIsPressed] = useState(false);
@@ -46,7 +48,7 @@ const StyledButton = forwardRef<React.Ref<View>, ButtonProps>(({
       ]}
       ref={ref as any} // Pass ref to Pressable, which ultimately forwards to View
     >
-      <Text style={[styles.text, { color: textColor, fontSize: fontSize, fontWeight: customWeight }]}>
+      <Text style={[styles.text, { color: textColor, fontSize: fontSize, fontWeight: customWeight, paddingVertical: paddingVertical }]}>
         {title}
       </Text>
     </Pressable>
@@ -55,7 +57,6 @@ const StyledButton = forwardRef<React.Ref<View>, ButtonProps>(({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 12,
     paddingHorizontal: 20,
     alignItems: "center",
     borderColor: '#456B72',

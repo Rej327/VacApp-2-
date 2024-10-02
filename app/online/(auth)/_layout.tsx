@@ -46,7 +46,7 @@ const TabsPage = () => {
 							fontWeight: "bold",
 							marginLeft: -10,
 						},
-
+						headerShadowVisible: false,
 						headerLeft: () => (
 							<Image
 								source={babyIcon} // Replace with your logo URL
@@ -101,6 +101,7 @@ const TabsPage = () => {
 							/>
 						),
 						headerRight: () => <Logout />,
+						
 					}}
 					redirect={!isSignedIn}
 				/>
