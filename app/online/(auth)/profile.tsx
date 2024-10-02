@@ -6,7 +6,8 @@ import CustomCard from "@/components/CustomCard";
 import ProfileInformation from "@/components/profile/ProfileInformation";
 import MyBaby from "@/components/profile/MyBaby";
 import Notification from "@/components/profile/Notification";
-
+import Milestones from "@/components/profile/Milestones";
+import Logout from "@/app/LogOut";
 const Profile = () => {
 	const { user } = useUser();
 
@@ -23,6 +24,8 @@ const Profile = () => {
 			<ProfileInformation />
 			<MyBaby />
 			<Notification />
+			<Milestones />
+			<Logout />
 		</ScrollView>
 	);
 };

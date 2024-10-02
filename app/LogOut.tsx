@@ -1,9 +1,10 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "@clerk/clerk-expo"; // Import Clerk's useAuth hook
 import { useRouter } from "expo-router"; // Import router for navigation
 import { Ionicons } from "@expo/vector-icons";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Logout() {
 	const { signOut } = useAuth(); // Get the signOut method from Clerk
@@ -26,8 +27,16 @@ export default function Logout() {
 	};
 
 	return (
-		<Pressable onPress={handleLogout} style={{ marginRight: 10 }}>
-			<Ionicons name="log-out-outline" size={24} color={"#fff"} />
-		</Pressable>
+		<TouchableOpacity
+			onPress={handleLogout}
+			className="bg-none border-[1px] border-[#aa0202] mt-1 mb-2 py-2 mx-2 rounded-xl"
+		>
+			<View className="flex flex-row gap-1 items-center justify-center">
+				<Ionicons name="log-out-outline" size={20} color={"#aa0202"} />
+				<ThemedText className="text-center text-[#aa0202]">
+					Logout
+				</ThemedText>
+			</View>
+		</TouchableOpacity>
 	);
 }

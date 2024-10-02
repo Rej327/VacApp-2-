@@ -100,7 +100,7 @@ const TabsPage = () => {
 								color={color}
 							/>
 						),
-						headerRight: () => <Logout />,
+						// headerRight: () => <Logout />,
 						
 					}}
 					redirect={!isSignedIn}
