@@ -4,6 +4,7 @@ import CustomCard from "../CustomCard";
 import { ThemedText } from "../ThemedText";
 import { useUser } from "@clerk/clerk-expo";
 import StyledButton from "../StyledButton";
+import Toast from "react-native-toast-message";
 
 export default function ProfileInformation() {
 	const { user } = useUser();
@@ -18,11 +19,23 @@ export default function ProfileInformation() {
 				lastName: lastName,
 				username: username,
 			});
+			Toast.show({
+				type: "success",
+				text1: "Success",
+				text2: "Update profile successfully!",
+				position: "top",
+			});
 			console.log(
 				"🚀 ~ file: profile.tsx:16 ~ onSaveUser ~ result:",
 				result
 			);
 		} catch (e) {
+			Toast.show({
+				type: "error",
+				text1: "Error",
+				text2: "Failed to update profile!",
+				position: "top",
+			});
 			console.log(
 				"🚀 ~ file: profile.tsx:18 ~ onSaveUser ~ e",
 				JSON.stringify(e)

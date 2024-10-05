@@ -12,8 +12,11 @@ import {
 import { ThemedText } from "@/components/ThemedText";
 import CustomCard from "@/components/CustomCard";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import StyledButton from "../StyledButton";
+import { db } from "@/db/firebaseConfig"; // Import Firestore config
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore"; // Import Firestore functions
+import { useUser } from "@clerk/clerk-expo";
+import Toast from "react-native-toast-message"; // Ensure you have this installed
 
 // Define the interface for Baby
 interface Baby {
@@ -32,29 +35,71 @@ const MyBaby = () => {
 	const [date, setDate] = useState(new Date());
 	const [selectedBaby, setSelectedBaby] = useState<Baby | null>(null);
 	const [showDropdown, setShowDropdown] = useState(false);
+	const { user } = useUser();
 
-	// Load babies from AsyncStorage when the component mounts
+	// Load babies from Firestore when the component mounts
+	const loadBabies = async () => {
+		if (!user?.id) {
+			console.log("User ID is not available.");
+			return; // Early return if user ID is not present
+		}
+
+		try {
+			const babiesQuery = query(collection(db, "babies"), where("parentId", "==", user.id));
+			const querySnapshot = await getDocs(babiesQuery);
+			const babiesData = querySnapshot.docs.map((doc) => {
+				const data = doc.data();
+				return {
+					id: doc.id,
+					firstName: data.firstName,
+					lastName: data.lastName,
+					birthday: data.birthday,
+				} as Baby; // Cast to Baby type
+			});
+
+			setBabies(babiesData);
+		} catch (error) {
+			console.error("Error fetching babies from Firestore: ", error);
+		}
+	};
+
 	useEffect(() => {
-		const loadBabies = async () => {
-			const storedBabies = await AsyncStorage.getItem("babies");
-			if (storedBabies) {
-				setBabies(JSON.parse(storedBabies));
-			}
-		};
 		loadBabies();
-	}, []);
+	}, [user]); // Add user as a dependency to refetch babies when the user changes
 
-	// Save babies to AsyncStorage whenever the babies array changes
-	useEffect(() => {
-		const saveBabies = async () => {
-			await AsyncStorage.setItem("babies", JSON.stringify(babies));
-		};
-		saveBabies();
-	}, [babies]);
+	// Function to add baby data to Firestore
+	const addBabyToFirestore = async (newBaby: Baby) => {
+		try {
+			await addDoc(collection(db, "babies"), {
+				parentId: user?.id,
+				firstName: newBaby.firstName,
+				lastName: newBaby.lastName,
+				birthday: newBaby.birthday,
+			});
+			console.log("Baby added to Firestore!");
+			Toast.show({
+				type: "success",
+				text1: "Success",
+				text2: "Baby added successfully!",
+				position: "top",
+			});
+		} catch (error) {
+			console.error("Error adding baby to Firestore: ", error);
+			Toast.show({
+				type: "error",
+				text1: "Error",
+				text2: "Failed to add baby!",
+				position: "top",
+			});
+		}
 
+		loadBabies();
+	};
+
+	// Handle adding a baby (only to Firestore)
 	const handleAddBaby = () => {
 		const newBaby: Baby = { firstName, lastName, birthday };
-		setBabies((prevBabies) => [...prevBabies, newBaby]);
+		addBabyToFirestore(newBaby); // Add baby to Firestore
 		setFirstName("");
 		setLastName("");
 		setBirthday("");
@@ -87,7 +132,6 @@ const MyBaby = () => {
 
 	return (
 		<ScrollView>
-			{/* Check if there are babies */}
 			{babies.length > 0 ? (
 				<CustomCard className="my-2">
 					<ThemedText type="cardHeader" className="mb-2">
@@ -101,9 +145,16 @@ const MyBaby = () => {
 						style={styles.input}
 					>
 						<View className="flex flex-row justify-between">
-							{selectedBaby
-								? babyInfo(selectedBaby) // Pass the selected baby to babyInfo
-								: <ThemedText type="default" className="font-bold">Choose Baby</ThemedText>}
+							{selectedBaby ? (
+								babyInfo(selectedBaby) // Pass the selected baby to babyInfo
+							) : (
+								<ThemedText
+									type="default"
+									className="font-bold"
+								>
+									Choose Baby
+								</ThemedText>
+							)}
 						</View>
 					</TouchableOpacity>
 					{showDropdown && (
@@ -142,7 +193,8 @@ const MyBaby = () => {
 						No babies added yet!
 					</ThemedText>
 					<ThemedText type="default" className="text-center mb-2">
-						Please add a baby to use all features of the application.
+						Please add a baby to use all features of the
+						application.
 					</ThemedText>
 					<StyledButton
 						title="Add Baby"
@@ -155,7 +207,6 @@ const MyBaby = () => {
 				</CustomCard>
 			)}
 
-			{/* Add Baby Modal */}
 			<Modal
 				visible={isModalVisible}
 				animationType="slide"
@@ -181,7 +232,6 @@ const MyBaby = () => {
 							style={styles.input}
 						/>
 
-						{/* Birthday Input Field */}
 						<TouchableOpacity
 							onPress={() => setShowDatePicker(true)}
 							style={styles.input}
@@ -191,7 +241,6 @@ const MyBaby = () => {
 							</ThemedText>
 						</TouchableOpacity>
 
-						{/* DateTimePicker */}
 						{showDatePicker && (
 							<DateTimePicker
 								value={date}
@@ -265,10 +314,10 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	dropdownItem: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		flexDirection: 'row',
+		display: "flex",
+		justifyContent: "space-between",
+		flexDirection: "row",
 		padding: 10,
-    width: "100%"
+		width: "100%",
 	},
 });
