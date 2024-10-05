@@ -4,6 +4,8 @@ import { useRouter, Slot } from "expo-router"; // Import useRouter
 import * as Font from "expo-font"; // Import expo-font
 import * as SplashScreen from "expo-splash-screen"; // Import SplashScreen
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
+import { Toaster } from "./Toaster";
 
 const RootLayout = () => {
 	const [isOffline, setIsOffline] = useState(false);
@@ -76,6 +78,7 @@ const RootLayout = () => {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<Slot />
+			<Toaster />
 		</GestureHandlerRootView> // Slot will render the appropriate layout from online or offline folders
 	);
 };

@@ -45,7 +45,10 @@ const MyBaby = () => {
 		}
 
 		try {
-			const babiesQuery = query(collection(db, "babies"), where("parentId", "==", user.id));
+			const babiesQuery = query(
+				collection(db, "babies"),
+				where("parentId", "==", user.id)
+			);
 			const querySnapshot = await getDocs(babiesQuery);
 			const babiesData = querySnapshot.docs.map((doc) => {
 				const data = doc.data();
@@ -80,7 +83,7 @@ const MyBaby = () => {
 			Toast.show({
 				type: "success",
 				text1: "Success",
-				text2: "Baby added successfully!",
+				text2: "Baby added successfully! 👶",
 				position: "top",
 			});
 		} catch (error) {
@@ -88,9 +91,10 @@ const MyBaby = () => {
 			Toast.show({
 				type: "error",
 				text1: "Error",
-				text2: "Failed to add baby!",
+				text2: "Failed to add baby! ❌",
 				position: "top",
 			});
+			console.log("Failed to add baby in Firestore!");
 		}
 
 		loadBabies();
@@ -98,8 +102,26 @@ const MyBaby = () => {
 
 	// Handle adding a baby (only to Firestore)
 	const handleAddBaby = () => {
+		// Check if all fields are filled
+		if (!firstName || !lastName || !birthday) {
+			// Show an error toast if any field is empty
+			Toast.show({
+				type: "error",
+				text1: "Missing Information",
+				text2: "Please fill out all fields before adding a baby!",
+				position: "top",
+			});
+			console.log("Failed to add baby in Firestore!");
+			setIsModalVisible(false);
+			return; // Stop the function here if any field is empty
+		}
+
 		const newBaby: Baby = { firstName, lastName, birthday };
-		addBabyToFirestore(newBaby); // Add baby to Firestore
+
+		// Add baby to Firestore
+		addBabyToFirestore(newBaby);
+
+		// Reset form fields
 		setFirstName("");
 		setLastName("");
 		setBirthday("");

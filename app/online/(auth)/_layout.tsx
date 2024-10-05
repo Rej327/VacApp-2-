@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { babyIcon } from "@/assets";
 import { HomeRightHeader } from "@/components/HomeRightHeader";
 import Logout from "@/app/LogOut";
-import Toast from "react-native-toast-message";
 
 interface UserData {
 	email: string;
@@ -106,7 +105,7 @@ const TabsPage = () => {
 					redirect={!isSignedIn}
 				/>
 			</Tabs>
-			<Toast />
+
 		</>
 	);
 };
