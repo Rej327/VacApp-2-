@@ -1,14 +1,11 @@
 import { View, Image, RefreshControl } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
-import { ThemedText } from "@/components/ThemedText";
 import { ScrollView } from "react-native-gesture-handler";
-import CustomCard from "@/components/CustomCard";
 import ProfileInformation from "@/components/profile/ProfileInformation";
 import MyBaby from "@/components/profile/MyBaby";
 import Notification from "@/components/profile/Notification";
 import Milestones from "@/components/profile/Milestones";
 import Logout from "@/app/LogOut";
-import FirebaseTest from "@/components/profile/FirebaseTest";
 import { useState } from "react";
 const Profile = () => {
 	const [refreshing, setRefreshing] = useState(false);

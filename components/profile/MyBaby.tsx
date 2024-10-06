@@ -17,23 +17,31 @@ import { db } from "@/db/firebaseConfig"; // Import Firestore config
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore"; // Import Firestore functions
 import { useUser } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message"; // Ensure you have this installed
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define the interface for Baby
 interface Baby {
 	firstName: string;
 	lastName: string;
-	birthday: string;
+	birthday: Date;
+}
+
+interface SelectedBaby {
+	id: string;
+	firstName: string;
+	lastName: string;
+	birthday: Date;
 }
 
 const MyBaby = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [birthday, setBirthday] = useState("");
-	const [babies, setBabies] = useState<Baby[]>([]);
+	const [birthday, setBirthday] = useState<Date | null>(null);
+	const [babies, setBabies] = useState<SelectedBaby[]>([]);
 	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [date, setDate] = useState(new Date());
-	const [selectedBaby, setSelectedBaby] = useState<Baby | null>(null);
+	const [selectedBaby, setSelectedBaby] = useState<SelectedBaby | null>(null);
 	const [showDropdown, setShowDropdown] = useState(false);
 	const { user } = useUser();
 
@@ -56,8 +64,12 @@ const MyBaby = () => {
 					id: doc.id,
 					firstName: data.firstName,
 					lastName: data.lastName,
-					birthday: data.birthday,
-				} as Baby; // Cast to Baby type
+					// Convert birthday from Firestore Timestamp to Date
+					birthday:
+						data.birthday instanceof Date
+							? data.birthday
+							: data.birthday.toDate(), // Assuming birthday is stored as a Firestore Timestamp
+				} as SelectedBaby; // Cast to Baby type
 			});
 
 			setBabies(babiesData);
@@ -70,20 +82,26 @@ const MyBaby = () => {
 		loadBabies();
 	}, [user]); // Add user as a dependency to refetch babies when the user changes
 
-	// Function to add baby data to Firestore
+	// Function to add baby to Firestore
 	const addBabyToFirestore = async (newBaby: Baby) => {
 		try {
-			await addDoc(collection(db, "babies"), {
+			// Add baby to Firestore
+			const docRef = await addDoc(collection(db, "babies"), {
 				parentId: user?.id,
 				firstName: newBaby.firstName,
 				lastName: newBaby.lastName,
 				birthday: newBaby.birthday,
 			});
+
 			console.log("Baby added to Firestore!");
+			loadBabies();
+			// Generate the vaccination milestones for the baby
+			await addMilestoneToFirestore(docRef.id, newBaby);
+
 			Toast.show({
 				type: "success",
 				text1: "Success",
-				text2: "Baby added successfully! 👶",
+				text2: "Baby and milestones added successfully! 👶",
 				position: "top",
 			});
 		} catch (error) {
@@ -94,10 +112,119 @@ const MyBaby = () => {
 				text2: "Failed to add baby! ❌",
 				position: "top",
 			});
-			console.log("Failed to add baby in Firestore!");
 		}
+	};
 
-		loadBabies();
+	// Function to add vaccination milestones to Firestore
+	const addMilestoneToFirestore = async (babyId: string, newBaby: Baby) => {
+		const vaccineSchedule = [
+			{ vaccine: "BCG", ageInMonths: 0, received: false },
+			{
+				vaccine: "Hepatitis B (1st dose)",
+				ageInMonths: 0,
+				received: false,
+			},
+			{
+				vaccine: "Hepatitis B (2nd dose)",
+				ageInMonths: 1,
+				received: false,
+			},
+			{
+				vaccine: "Pentavalent Vaccine (1st dose)",
+				ageInMonths: 2,
+				received: false,
+			},
+			{
+				vaccine: "Oral Polio Vaccine (1st dose)",
+				ageInMonths: 2,
+				received: false,
+			},
+			{
+				vaccine: "Pneumococcal Conjugate Vaccine (1st dose)",
+				ageInMonths: 2,
+				received: false,
+			},
+			{
+				vaccine: "Pentavalent Vaccine (2nd dose)",
+				ageInMonths: 4,
+				received: false,
+			},
+			{
+				vaccine: "Oral Polio Vaccine (2nd dose)",
+				ageInMonths: 4,
+				received: false,
+			},
+			{
+				vaccine: "Pneumococcal Conjugate Vaccine (2nd dose)",
+				ageInMonths: 4,
+				received: false,
+			},
+			{
+				vaccine: "Pentavalent Vaccine (3rd dose)",
+				ageInMonths: 6,
+				received: false,
+			},
+			{
+				vaccine: "Oral Polio Vaccine (3rd dose)",
+				ageInMonths: 6,
+				received: false,
+			},
+			{
+				vaccine: "Inactivated Polio Vaccine",
+				ageInMonths: 6,
+				received: false,
+			},
+			{
+				vaccine: "Pneumococcal Conjugate Vaccine (3rd dose)",
+				ageInMonths: 6,
+				received: false,
+			},
+			{
+				vaccine: "Measles-Rubella (1st dose)",
+				ageInMonths: 9,
+				received: false,
+			},
+			{
+				vaccine: "Japanese Encephalitis (1st dose)",
+				ageInMonths: 9,
+				received: false,
+			},
+			{
+				vaccine: "Measles-Rubella (2nd dose)",
+				ageInMonths: 12,
+				received: false,
+			},
+		];
+
+		const babyBirthday = new Date(newBaby.birthday);
+
+		// Calculate the expected date of each vaccination based on baby's birthday
+		const milestones = vaccineSchedule.map((vaccine) => {
+			const expectedDate = new Date(babyBirthday);
+			expectedDate.setMonth(
+				babyBirthday.getMonth() + vaccine.ageInMonths
+			); // Handles month overflow
+
+			return {
+				vaccine: vaccine.vaccine,
+				ageInMonths: vaccine.ageInMonths,
+				expectedDate: expectedDate.toISOString(), // Store as a date string
+				received: vaccine.received,
+			};
+		});
+
+		try {
+			await addDoc(collection(db, "milestones"), {
+				babyId: babyId,
+				parentId: user?.id,
+				firstName: newBaby.firstName,
+				lastName: newBaby.lastName,
+				milestone: milestones,
+			});
+			console.log("Milestones added to Firestore!");
+		} catch (error) {
+			console.error("Error adding milestones to Firestore: ", error);
+		}
 	};
 
 	// Handle adding a baby (only to Firestore)
@@ -112,11 +239,12 @@ const MyBaby = () => {
 				position: "top",
 			});
 			console.log("Failed to add baby in Firestore!");
+			loadBabies();
 			setIsModalVisible(false);
 			return; // Stop the function here if any field is empty
 		}
 
-		const newBaby: Baby = { firstName, lastName, birthday };
+		const newBaby: Baby = { firstName, lastName, birthday }; // Use the Date object for birthday
 
 		// Add baby to Firestore
 		addBabyToFirestore(newBaby);
@@ -124,7 +252,7 @@ const MyBaby = () => {
 		// Reset form fields
 		setFirstName("");
 		setLastName("");
-		setBirthday("");
+		setBirthday(null); // Reset birthday to null
 		setIsModalVisible(false);
 	};
 
@@ -132,12 +260,38 @@ const MyBaby = () => {
 		const currentDate = selectedDate || date;
 		setShowDatePicker(Platform.OS === "ios");
 		setDate(currentDate);
-		setBirthday(currentDate.toLocaleDateString("en-US")); // Format the date as MM/DD/YYYY
+		setBirthday(currentDate); // Store the Date object directly
 	};
 
-	const handleSelectBaby = (baby: Baby) => {
-		setSelectedBaby(baby);
-		setShowDropdown(false); // Close dropdown after selection
+	const handleSelectBaby = async (baby: SelectedBaby) => {
+		try {
+			setSelectedBaby(baby);
+			setShowDropdown(false); // Close dropdown after selection
+
+			// Retrieve the currently saved baby ID from local storage
+			const existingBabyId = await AsyncStorage.getItem("selectedBabyId");
+
+			// Check if an ID already exists
+			if (existingBabyId) {
+				console.log(
+					`Existing baby ID found: ${existingBabyId}. Replacing it with new ID: ${baby.id}`
+				);
+			} else {
+				console.log(
+					`No existing baby ID found. Saving new ID: ${baby.id}`
+				);
+			}
+
+			// Save the selected baby's ID to local storage, replacing any existing ID
+			await AsyncStorage.setItem("selectedBabyId", baby.id);
+
+			console.log(`Saved selected baby ID: ${baby.id}`);
+		} catch (error) {
+			console.error(
+				"Error saving selected baby ID to local storage: ",
+				error
+			);
+		}
 	};
 
 	// Corrected the babyInfo function to return JSX
@@ -147,7 +301,9 @@ const MyBaby = () => {
 				<ThemedText type="default">
 					{baby.firstName} {baby.lastName}
 				</ThemedText>
-				<ThemedText type="default">{baby.birthday}</ThemedText>
+				<ThemedText type="default">
+					{baby.birthday.toLocaleDateString("en-US")}
+				</ThemedText>
 			</View>
 		);
 	};
@@ -168,7 +324,7 @@ const MyBaby = () => {
 					>
 						<View className="flex flex-row justify-between">
 							{selectedBaby ? (
-								babyInfo(selectedBaby) // Pass the selected baby to babyInfo
+								babyInfo(selectedBaby) // Display the selected baby's info
 							) : (
 								<ThemedText
 									type="default"
@@ -191,7 +347,9 @@ const MyBaby = () => {
 										{baby.firstName} {baby.lastName}
 									</ThemedText>
 									<ThemedText type="default">
-										{baby.birthday}
+										{baby.birthday.toLocaleDateString(
+											"en-US"
+										)}
 									</ThemedText>
 								</TouchableOpacity>
 							))}
@@ -259,7 +417,9 @@ const MyBaby = () => {
 							style={styles.input}
 						>
 							<ThemedText type="default">
-								{birthday || "Select Birthday"}
+								{birthday
+									? birthday.toLocaleDateString("en-US")
+									: "Select Birthday"}
 							</ThemedText>
 						</TouchableOpacity>
 
@@ -273,15 +433,21 @@ const MyBaby = () => {
 						)}
 
 						<View style={styles.buttonContainer}>
-							<Button
-								title="Add Baby"
+							<StyledButton
+								title="Submit"
 								onPress={handleAddBaby}
-								color="#456B72"
+								customWeight="500"
+								fontSize={12}
+								borderRadius={5}
 							/>
-							<Button
+							<StyledButton
 								title="Cancel"
 								onPress={() => setIsModalVisible(false)}
-								color="#d6d6d6"
+								bgColor="#d6d6d6"
+								customWeight="500"
+								fontSize={12}
+								borderRadius={5}
+								textColor="#456B72"
 							/>
 						</View>
 					</View>

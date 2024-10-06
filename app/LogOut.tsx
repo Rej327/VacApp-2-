@@ -17,6 +17,7 @@ export default function Logout() {
 			// Optionally clear local storage if needed
 			await AsyncStorage.removeItem("userData");
 			await AsyncStorage.removeItem("babies");
+			await AsyncStorage.removeItem("selectedBabyId");
 			console.log("User signed out and data cleared");
 
 			// Redirect to the login page after sign-out

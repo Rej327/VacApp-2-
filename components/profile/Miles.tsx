@@ -1,16 +1,9 @@
-import {
-	View,
-	StyleSheet,
-	Modal,
-	TouchableOpacity,
-	ActivityIndicator,
-	ScrollView, // Add ScrollView for the modal
-} from "react-native";
+import { View, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomCard from "../CustomCard";
 import { ThemedText } from "../ThemedText";
 import { Ionicons } from "@expo/vector-icons";
-import { db } from "@/db/firebaseConfig";
+import { db } from "@/db/firebaseConfig"; // Import Firestore config
 import { collection, query, where, getDocs } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -25,18 +18,16 @@ type BabyMilestone = {
 	babyId: string;
 	firstName: string;
 	lastName: string;
-	milestones: Milestone[];
+	milestones: Milestone[]; // Make sure this matches your data structure
 	parentId: string;
 };
 
-export default function Milestones() {
+export default function Miles() {
 	const [modalVisible, setModalVisible] = useState(false);
-	const [selectedMilestoneGroup, setSelectedMilestoneGroup] = useState<
-		Milestone[] | null
-	>(null); // Update to hold a group of milestones
+	const [selectedMilestone, setSelectedMilestone] =
+		useState<Milestone | null>(null);
 	const [milestones, setMilestones] = useState<Milestone[]>([]);
 	const [selectedBabyId, setSelectedBabyId] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false); // Add loading state
 
 	const fetchBabyId = async () => {
 		try {
@@ -57,7 +48,6 @@ export default function Milestones() {
 	}, [selectedBabyId]);
 
 	const fetchMilestones = async (babyId: string) => {
-		setLoading(true); // Start loading spinner
 		const milestonesRef = query(
 			collection(db, "milestones"),
 			where("babyId", "==", babyId)
@@ -65,34 +55,35 @@ export default function Milestones() {
 
 		try {
 			const querySnapshot = await getDocs(milestonesRef);
-			const fetchedMilestones: Milestone[] = [];
+			const fetchedMilestones: Milestone[] = []; // Create an array to hold the fetched milestones
 
 			querySnapshot.docs.forEach((doc) => {
 				const milestoneData = doc.data();
+				// Ensure that the data structure matches the Milestone type
 				if (milestoneData.milestone) {
 					fetchedMilestones.push(...milestoneData.milestone);
 				}
 			});
 
+			// Set the fetched milestones to the state
 			setMilestones(fetchedMilestones);
-			console.log("Fetched Milestones: ", fetchedMilestones);
+			console.log("Fetched Milestones: ", fetchedMilestones); // Log the fetched milestones
 		} catch (error) {
 			console.error("Error fetching milestones: ", error);
-		} finally {
-			setLoading(false); // Stop loading spinner after data is fetched
 		}
 	};
 
-	const handlePress = (milestoneGroup: Milestone[]) => {
-		setSelectedMilestoneGroup(milestoneGroup); // Pass the whole group
+	const handlePress = (milestone: Milestone) => {
+		setSelectedMilestone(milestone);
 		setModalVisible(true);
 	};
 
 	const closeModal = () => {
 		setModalVisible(false);
-		setSelectedMilestoneGroup(null);
+		setSelectedMilestone(null);
 	};
 
+	// Aggregate milestones by age
 	const aggregateMilestones = (milestones: Milestone[]) => {
 		const aggregated: { [key: number]: Milestone[] } = {};
 
@@ -120,7 +111,6 @@ export default function Milestones() {
 		fetchBabyId();
 		console.log("Refetching milestone", fetchBabyId);
 	};
-
 	return (
 		<>
 			<CustomCard>
@@ -143,10 +133,11 @@ export default function Milestones() {
 								(milestoneGroup, index) => (
 									<TouchableOpacity
 										key={index}
-										onPress={() =>
-											handlePress(
-												milestoneGroup.vaccines
-											)
+										onPress={
+											() =>
+												handlePress(
+													milestoneGroup.vaccines[0]
+												) // Show details for the first vaccine
 										}
 										className={`flex flex-row justify-between py-4 ${
 											index ===
@@ -178,13 +169,6 @@ export default function Milestones() {
 				</View>
 			</CustomCard>
 
-			{/* Loading Overlay */}
-			{loading && (
-				<View style={styles.loadingOverlay}>
-					<ActivityIndicator size="large" color="#456B72" />
-				</View>
-			)}
-
 			{/* Modal for Vaccine Details */}
 			<Modal
 				animationType="slide"
@@ -195,12 +179,13 @@ export default function Milestones() {
 				<View style={styles.modalContainer}>
 					<View style={styles.modalContent}>
 						<ThemedText type="cardHeader" className="font-bold">
-							Vaccine Details
+							Vaccine Details for {selectedMilestone?.ageInMonths}{" "}
+							months
 						</ThemedText>
-						<ScrollView style={styles.vaccineDetails}>
-							{selectedMilestoneGroup?.map((milestone, index) => (
-								<View style={styles.vaccineItem} key={index}>
-									{milestone.received ? (
+						<View style={styles.vaccineDetails}>
+							{selectedMilestone && (
+								<View style={styles.vaccineItem}>
+									{selectedMilestone.received ? (
 										<Ionicons
 											name="checkmark-circle"
 											size={20}
@@ -214,11 +199,11 @@ export default function Milestones() {
 										/>
 									)}
 									<ThemedText style={styles.vaccineText}>
-										{milestone.vaccine}
+										{selectedMilestone.vaccine}
 									</ThemedText>
 								</View>
-							))}
-						</ScrollView>
+							)}
+						</View>
 						<TouchableOpacity
 							onPress={closeModal}
 							style={styles.closeButton}
@@ -263,21 +248,10 @@ const styles = StyleSheet.create({
 	closeButton: {
 		marginTop: 20,
 		padding: 10,
-		backgroundColor: "#456B72",
+		backgroundColor: "#86b3bc",
 		borderRadius: 5,
 	},
 	closeButtonText: {
 		color: "#fff",
-	},
-	loadingOverlay: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		backgroundColor: "#00000068",
-		justifyContent: "center",
-		alignItems: "center",
-		zIndex: 1000, // Ensure it overlays on top
 	},
 });

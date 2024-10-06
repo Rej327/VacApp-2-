@@ -9,7 +9,7 @@ const toastConfig = {
 	success: (props: ToastConfigParams<any>) => (
 		<BaseToast
 			{...props}
-			style={{ borderLeftColor: "green", marginTop: -20  }}
+			style={{ borderLeftColor: "green" }}
 			contentContainerStyle={{ paddingHorizontal: 15 }}
 			text1Style={{
 				fontSize: 16,
@@ -23,7 +23,7 @@ const toastConfig = {
 	error: (props: ToastConfigParams<any>) => (
 		<ErrorToast
 			{...props}
-			style={{ borderLeftColor: "red", marginTop: -20 }}
+			style={{ borderLeftColor: "red" }}
 			contentContainerStyle={{ paddingHorizontal: 15 }}
 			text1Style={{
 				fontSize: 16,
