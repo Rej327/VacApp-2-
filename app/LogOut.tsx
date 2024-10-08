@@ -17,8 +17,10 @@ export default function Logout() {
 			// Optionally clear local storage if needed
 			await AsyncStorage.removeItem("userData");
 			await AsyncStorage.removeItem("babies");
+			await AsyncStorage.removeItem("userPassword");
 			await AsyncStorage.removeItem("selectedBabyId");
-			console.log("User signed out and data cleared");
+
+			console.log("User signed out and all data was cleared");
 
 			// Redirect to the login page after sign-out
 			router.replace("/online/(public)/main");

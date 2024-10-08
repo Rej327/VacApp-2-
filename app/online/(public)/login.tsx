@@ -1,5 +1,4 @@
 import Logout from "@/app/LogOut";
-import TestDataOnline from "@/app/TextDataOnline";
 import { babyIcon, botField, topField } from "@/assets";
 import CustomHeadFoot from "@/components/CustomHeadFoot";
 import CustomInput from "@/components/CustomInput";
@@ -7,6 +6,7 @@ import StyledButton from "@/components/StyledButton";
 import { ThemedText } from "@/components/ThemedText";
 // import TopBg from "@/components/TopBg";
 import { useSignIn } from "@clerk/clerk-expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -20,6 +20,7 @@ import {
 	Image,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
+import Toast from "react-native-toast-message";
 
 const Login = () => {
 	const { signIn, setActive, isLoaded } = useSignIn();
@@ -39,10 +40,27 @@ const Login = () => {
 				password,
 			});
 
+			if (completeSignIn) {
+				await AsyncStorage.setItem(
+					"userPassword",
+					JSON.stringify({ password: password })
+				);
+			}
+
 			// This indicates the user is signed in
 			await setActive({ session: completeSignIn.createdSessionId });
+
+			Toast.show({
+				type: "success",
+				text1: "Login successful",
+				text2: "User is now active.",
+			});
 		} catch (err: any) {
-			alert(err.errors[0].message);
+			Toast.show({
+				type: "error",
+				text1: "Login Error",
+				text2: "Invalid credentials!",
+			});
 		} finally {
 			setLoading(false);
 		}

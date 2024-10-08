@@ -22,7 +22,7 @@ interface CustomBodyProps {
 	children: ReactNode;
 	title: string;
 	backRoute: string;
-	url: string;
+	url?: string;
 	fileName: string;
 	headerImage: object;
 	headerImageStyle: string;
@@ -50,7 +50,7 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 			const fileUri = FileSystem.documentDirectory + fileName;
 
 			// Download file
-			const { uri } = await FileSystem.downloadAsync(url, fileUri);
+			const { uri } = await FileSystem.downloadAsync(url || "", fileUri);
 
 			// Check if the file can be opened or shared
 			if (await Sharing.isAvailableAsync()) {

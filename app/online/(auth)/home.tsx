@@ -28,10 +28,12 @@ import CustomBottomSheet from "@/components/CustomBottomSheet";
 import { events, milestones } from "@/assets/data/data";
 
 interface UserData {
-	email: string;
 	id: string;
+	email: string;
+	username: string;
 	firstName: string;
 	lastName: string;
+	isActive: boolean;
 }
 
 const Home = () => {
@@ -44,10 +46,12 @@ const Home = () => {
 		if (user) {
 			try {
 				const userData: UserData = {
-					email: user.emailAddresses?.[0]?.emailAddress || "",
 					id: user.id,
+					email: user.emailAddresses?.[0]?.emailAddress || "",
+					username: user.username || "",
 					firstName: user.firstName || "",
 					lastName: user.lastName || "",
+					isActive: false,
 				};
 
 				await AsyncStorage.setItem(

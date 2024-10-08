@@ -14,7 +14,7 @@ import CustomCard from "@/components/CustomCard";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import StyledButton from "../StyledButton";
 import { db } from "@/db/firebaseConfig"; // Import Firestore config
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore"; // Import Firestore functions
+import { collection, addDoc, getDocs, query, where, doc, getDoc } from "firebase/firestore"; // Import Firestore functions
 import { useUser } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message"; // Ensure you have this installed
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -64,7 +64,6 @@ const MyBaby = () => {
 					id: doc.id,
 					firstName: data.firstName,
 					lastName: data.lastName,
-					// Convert birthday from Firestore Timestamp to Date
 					birthday:
 						data.birthday instanceof Date
 							? data.birthday
@@ -78,8 +77,37 @@ const MyBaby = () => {
 		}
 	};
 
+	// Fetch the selected baby using the stored ID in AsyncStorage
+	const fetchSelectedBaby = async (id: string) => {
+		try {
+			const babyRef = doc(db, "babies", id);
+			const babySnapshot = await getDoc(babyRef);
+			if (babySnapshot.exists()) {
+				const data = babySnapshot.data();
+				setSelectedBaby({
+					id: babySnapshot.id,
+					firstName: data.firstName,
+					lastName: data.lastName,
+					birthday: data.birthday instanceof Date ? data.birthday : data.birthday.toDate(),
+				});
+			} else {
+				console.log("No such baby!");
+			}
+		} catch (error) {
+			console.error("Error fetching selected baby data: ", error);
+		}
+	};
+
 	useEffect(() => {
 		loadBabies();
+		const loadSelectedBabyId = async () => {
+			const existingBabyId = await AsyncStorage.getItem("selectedBabyId");
+			if (existingBabyId) {
+				await fetchSelectedBaby(existingBabyId);
+			}
+		};
+
+		loadSelectedBabyId();
 	}, [user]); // Add user as a dependency to refetch babies when the user changes
 
 	// Function to add baby to Firestore
@@ -118,81 +146,117 @@ const MyBaby = () => {
 	// Function to add vaccination milestones to Firestore
 	const addMilestoneToFirestore = async (babyId: string, newBaby: Baby) => {
 		const vaccineSchedule = [
-			{ vaccine: "BCG", ageInMonths: 0, received: false },
+			{
+				vaccine: "BCG",
+				ageInMonths: 0,
+				received: false,
+				description:
+					"Bacillus Calmette-Guérin (BCG) vaccine protects against tuberculosis (TB), particularly severe forms in children like TB meningitis.",
+			},
 			{
 				vaccine: "Hepatitis B (1st dose)",
 				ageInMonths: 0,
 				received: false,
+				description:
+					"Prevents Hepatitis B virus (HBV) infection, which can cause chronic liver disease and liver cancer.",
 			},
 			{
 				vaccine: "Hepatitis B (2nd dose)",
 				ageInMonths: 1,
 				received: false,
+				description:
+					"Second dose to strengthen immunity against Hepatitis B infection.",
 			},
 			{
 				vaccine: "Pentavalent Vaccine (1st dose)",
 				ageInMonths: 2,
 				received: false,
+				description:
+					"Combines protection against 5 diseases: diphtheria (D), pertussis (P), tetanus (T), hepatitis B (HB), and Haemophilus influenzae type B (Hib).",
 			},
 			{
 				vaccine: "Oral Polio Vaccine (1st dose)",
 				ageInMonths: 2,
 				received: false,
+				description:
+					"Oral Polio Vaccine (OPV) protects against poliovirus, which can lead to paralysis.",
 			},
 			{
 				vaccine: "Pneumococcal Conjugate Vaccine (1st dose)",
 				ageInMonths: 2,
 				received: false,
+				description:
+					"PCV protects against infections caused by Streptococcus pneumoniae, such as pneumonia, meningitis, and sepsis.",
 			},
 			{
 				vaccine: "Pentavalent Vaccine (2nd dose)",
 				ageInMonths: 4,
 				received: false,
+				description:
+					"Second dose of DPT-HepB-Hib combination vaccine to maintain immunity.",
 			},
 			{
 				vaccine: "Oral Polio Vaccine (2nd dose)",
 				ageInMonths: 4,
 				received: false,
+				description:
+					"Second dose of OPV to reinforce protection against polio.",
 			},
 			{
 				vaccine: "Pneumococcal Conjugate Vaccine (2nd dose)",
 				ageInMonths: 4,
 				received: false,
+				description:
+					"Second dose of PCV for additional protection against pneumococcal diseases.",
 			},
 			{
 				vaccine: "Pentavalent Vaccine (3rd dose)",
 				ageInMonths: 6,
 				received: false,
+				description:
+					"Third and final dose of DPT-HepB-Hib for complete protection.",
 			},
 			{
 				vaccine: "Oral Polio Vaccine (3rd dose)",
 				ageInMonths: 6,
 				received: false,
+				description:
+					"Third and final OPV dose for full immunity against poliovirus.",
 			},
 			{
-				vaccine: "Inactivated Polio Vaccine",
+				vaccine: "Inactivated Polio Vaccine (IPV)",
 				ageInMonths: 6,
 				received: false,
+				description:
+					"IPV is an injected polio vaccine that boosts immunity against poliovirus, complementing the oral vaccine.",
 			},
 			{
 				vaccine: "Pneumococcal Conjugate Vaccine (3rd dose)",
 				ageInMonths: 6,
 				received: false,
+				description:
+					"Third and final dose of PCV for complete protection against pneumococcal diseases.",
 			},
 			{
 				vaccine: "Measles-Rubella (1st dose)",
 				ageInMonths: 9,
 				received: false,
+				description:
+					"MR vaccine protects against measles and rubella, two viral infections that can lead to serious complications.",
 			},
 			{
 				vaccine: "Japanese Encephalitis (1st dose)",
 				ageInMonths: 9,
 				received: false,
+				description:
+					"JE vaccine prevents Japanese Encephalitis, a viral brain infection transmitted by mosquitoes.",
 			},
 			{
 				vaccine: "Measles-Rubella (2nd dose)",
 				ageInMonths: 12,
 				received: false,
+				description:
+					"Second dose of MR vaccine ensures long-lasting protection against measles and rubella.",
 			},
 		];
 
@@ -201,15 +265,14 @@ const MyBaby = () => {
 		// Calculate the expected date of each vaccination based on baby's birthday
 		const milestones = vaccineSchedule.map((vaccine) => {
 			const expectedDate = new Date(babyBirthday);
-			expectedDate.setMonth(
-				babyBirthday.getMonth() + vaccine.ageInMonths
-			); // Handles month overflow
+			expectedDate.setMonth(babyBirthday.getMonth() + vaccine.ageInMonths); // Handles month overflow
 
 			return {
 				vaccine: vaccine.vaccine,
 				ageInMonths: vaccine.ageInMonths,
-				expectedDate: expectedDate.toISOString(), // Store as a date string
+				expectedDate: expectedDate, // Store as a date string
 				received: vaccine.received,
+				description: vaccine.description,
 			};
 		});
 
@@ -239,7 +302,6 @@ const MyBaby = () => {
 				position: "top",
 			});
 			console.log("Failed to add baby in Firestore!");
-			loadBabies();
 			setIsModalVisible(false);
 			return; // Stop the function here if any field is empty
 		}
@@ -268,34 +330,16 @@ const MyBaby = () => {
 			setSelectedBaby(baby);
 			setShowDropdown(false); // Close dropdown after selection
 
-			// Retrieve the currently saved baby ID from local storage
-			const existingBabyId = await AsyncStorage.getItem("selectedBabyId");
-
-			// Check if an ID already exists
-			if (existingBabyId) {
-				console.log(
-					`Existing baby ID found: ${existingBabyId}. Replacing it with new ID: ${baby.id}`
-				);
-			} else {
-				console.log(
-					`No existing baby ID found. Saving new ID: ${baby.id}`
-				);
-			}
-
-			// Save the selected baby's ID to local storage, replacing any existing ID
+			// Save the selected baby's ID to local storage
 			await AsyncStorage.setItem("selectedBabyId", baby.id);
-
 			console.log(`Saved selected baby ID: ${baby.id}`);
 		} catch (error) {
-			console.error(
-				"Error saving selected baby ID to local storage: ",
-				error
-			);
+			console.error("Error saving selected baby ID to local storage: ", error);
 		}
 	};
 
 	// Corrected the babyInfo function to return JSX
-	const babyInfo = (baby: Baby) => {
+	const babyInfo = (baby: SelectedBaby) => {
 		return (
 			<View style={styles.babyInfoContainer}>
 				<ThemedText type="default">

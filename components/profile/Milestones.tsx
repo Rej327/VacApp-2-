@@ -41,7 +41,7 @@ export default function Milestones() {
 	const fetchBabyId = async () => {
 		try {
 			const babyId = await AsyncStorage.getItem("selectedBabyId");
-			console.log("Fetched baby ID: ", babyId);
+			// console.log("Fetched baby ID: ", babyId);
 			if (babyId) {
 				setSelectedBabyId(babyId);
 				fetchMilestones(babyId);
@@ -53,7 +53,7 @@ export default function Milestones() {
 
 	useEffect(() => {
 		fetchBabyId();
-		console.log("Fetching milestone", fetchBabyId);
+		// console.log("Fetching milestone", fetchBabyId);
 	}, [selectedBabyId]);
 
 	const fetchMilestones = async (babyId: string) => {
@@ -75,7 +75,7 @@ export default function Milestones() {
 			});
 
 			setMilestones(fetchedMilestones);
-			console.log("Fetched Milestones: ", fetchedMilestones);
+			console.log("Fetched Milestones Success ");
 		} catch (error) {
 			console.error("Error fetching milestones: ", error);
 		} finally {
