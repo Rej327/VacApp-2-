@@ -26,6 +26,7 @@ interface CustomBodyProps {
 	fileName: string;
 	headerImage: object;
 	headerImageStyle: string;
+	onDownloadFunction?: any;
 }
 
 const CustomBody: React.FC<CustomBodyProps> = ({
@@ -36,6 +37,7 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 	fileName,
 	headerImage,
 	headerImageStyle,
+	onDownloadFunction,
 }) => {
 	const router = useRouter();
 
@@ -77,6 +79,10 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 	// 	console.log("handleSheetChanges", index);
 	// }, []);
 
+	const onDownload = () => {
+		onDownloadFunction();
+	};
+
 	return (
 		<View className="relative bg-[#86b3bc] h-full">
 			{/* Back Button */}
@@ -87,16 +93,29 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 						<ThemedText type="navigation">{title}</ThemedText>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => downloadPdf()}>
-					<View className="flex flex-row items-center gap-2">
-						<Ionicons
-							name="cloud-download"
-							size={24}
-							color="#456B72"
-						/>
-						<ThemedText>Download</ThemedText>
-					</View>
-				</TouchableOpacity>
+				{url ? (
+					<TouchableOpacity onPress={() => downloadPdf()}>
+						<View className="flex flex-row items-center gap-2">
+							<Ionicons
+								name="cloud-download"
+								size={24}
+								color="#456B72"
+							/>
+							<ThemedText>Download</ThemedText>
+						</View>
+					</TouchableOpacity>
+				) : (
+					<TouchableOpacity onPress={onDownload}>
+						<View className="flex flex-row items-center gap-2">
+							<Ionicons
+								name="cloud-download"
+								size={24}
+								color="#456B72"
+							/>
+							<ThemedText>Download</ThemedText>
+						</View>
+					</TouchableOpacity>
+				)}
 			</View>
 
 			{/* Background Graphics */}
@@ -133,8 +152,8 @@ const CustomBody: React.FC<CustomBodyProps> = ({
 						borderTopEndRadius: 10,
 						borderTopStartRadius: 10,
 					}}
-					backgroundStyle={{backgroundColor: '#f5f4f7'}}
-					handleIndicatorStyle={{backgroundColor: '#456B72'}}
+					backgroundStyle={{ backgroundColor: "#f5f4f7" }}
+					handleIndicatorStyle={{ backgroundColor: "#456B72" }}
 				>
 					<BottomSheetScrollView
 						contentContainerStyle={styles.contentContainer}
