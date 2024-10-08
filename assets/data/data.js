@@ -87,198 +87,133 @@ export const vaccinationTips = [
 
 export const vaccinationGuide = [
 	{
-		ageRange: "Birth",
+		ageRange: "At Birth",
 		vaccines: [
 			{
-				name: "HepB (Hepatitis B)",
-				doses: "1st dose",
+				name: "BCG (1st dose)",
 				details: "Administer within 24 hours of birth.",
+				description:
+					"Bacillus Calmette-Guérin (BCG) vaccine protects against tuberculosis (TB), particularly severe forms in children like TB meningitis.",
+			},
+			{
+				name: "Hepatitis B (1st dose)",
+				details: "Administer within 24 hours of birth.",
+				description:
+					"Prevents Hepatitis B virus (HBV) infection, which can cause chronic liver disease and liver cancer.",
 			},
 		],
 	},
 	{
-		ageRange: "1 – 2 months",
+		ageRange: "1 Month",
 		vaccines: [
 			{
-				name: "HepB (Hepatitis B)",
-				doses: "2nd dose",
+				name: "Hepatitis B (2nd dose)",
 				details: "Administer 1–2 months after the 1st dose.",
+				description:
+					"Second dose to strengthen immunity against Hepatitis B infection.",
 			},
+		],
+	},
+	{
+		ageRange: "2 Months",
+		vaccines: [
 			{
-				name: "RV (Rotavirus)",
-				doses: "1st dose",
-				details: "Administer between 6 weeks and 14 weeks.",
-			},
-			{
-				name: "Hib (Haemophilus Influenza B)",
-				doses: "1st dose",
+				name: "Pentavalent Vaccine (1st dose)",
 				details: "Administer at 2 months.",
+				description:
+					"Combines protection against 5 diseases: diphtheria (D), pertussis (P), tetanus (T), hepatitis B (HB), and Haemophilus influenzae type B (Hib).",
 			},
 			{
-				name: "DTaP (Diphtheria/Tetanus/Pertussis)",
-				doses: "1st dose",
+				name: "Oral Polio Vaccine (1st dose)",
 				details: "Administer at 2 months.",
+				description:
+					"Oral Polio Vaccine (OPV) protects against poliovirus, which can lead to paralysis.",
 			},
 			{
-				name: "PCV13 (Pneumococcal)",
-				doses: "1st dose",
+				name: "Pneumococcal Conjugate Vaccine (1st dose)",
 				details: "Administer at 2 months.",
-			},
-			{
-				name: "IPV (Polio)",
-				doses: "1st dose",
-				details: "Administer at 2 months.",
-			},
-			{
-				name: "Influenza",
-				doses: "1st dose",
-				details: "Administer annually starting at 6 months.",
+				description:
+					"PCV protects against infections caused by Streptococcus pneumoniae, such as pneumonia, meningitis, and sepsis.",
 			},
 		],
 	},
 	{
-		ageRange: "4 months",
+		ageRange: "4 Months",
 		vaccines: [
 			{
-				name: "RV (Rotavirus)",
-				doses: "2nd dose",
+				name: "Pentavalent Vaccine (2nd dose)",
 				details: "Administer at 4 months.",
+				description:
+					"Second dose of DPT-HepB-Hib combination vaccine to maintain immunity.",
 			},
 			{
-				name: "Hib (Haemophilus Influenza B)",
-				doses: "2nd dose",
+				name: "Oral Polio Vaccine (2nd dose)",
 				details: "Administer at 4 months.",
+				description:
+					"Second dose of OPV to reinforce protection against polio.",
 			},
 			{
-				name: "DTaP (Diphtheria/Tetanus/Pertussis)",
-				doses: "2nd dose",
+				name: "Pneumococcal Conjugate Vaccine (2nd dose)",
 				details: "Administer at 4 months.",
-			},
-			{
-				name: "PCV13 (Pneumococcal)",
-				doses: "2nd dose",
-				details: "Administer at 4 months.",
-			},
-			{
-				name: "IPV (Polio)",
-				doses: "2nd dose",
-				details: "Administer at 4 months.",
+				description:
+					"Second dose of PCV for additional protection against pneumococcal diseases.",
 			},
 		],
 	},
 	{
-		ageRange: "6 months",
+		ageRange: "6 Months",
 		vaccines: [
 			{
-				name: "HepB (Hepatitis B)",
-				doses: "3rd dose",
-				details: "Administer at 6-18 months.",
+				name: "Pentavalent Vaccine (3rd dose)",
+				details: "Administer at 6 months.",
+				description:
+					"Third and final dose of DPT-HepB-Hib for complete protection.",
 			},
 			{
-				name: "Influenza",
-				doses: "2nd dose",
-				details: "Administer annually.",
+				name: "Oral Polio Vaccine (3rd dose)",
+				details: "Administer at 6 months.",
+				description:
+					"Third and final OPV dose for full immunity against poliovirus.",
+			},
+			{
+				name: "Inactivated Polio Vaccine (IPV)",
+				details: "Administer at 6 months.",
+				description:
+					"IPV is an injected polio vaccine that boosts immunity against poliovirus, complementing the oral vaccine.",
+			},
+			{
+				name: "Pneumococcal Conjugate Vaccine (3rd dose)",
+				details: "Administer at 6 months.",
+				description:
+					"Third and final dose of PCV for complete protection against pneumococcal diseases.",
 			},
 		],
 	},
 	{
-		ageRange: "12 – 15 months",
+		ageRange: "9 Months",
 		vaccines: [
 			{
-				name: "MMR (Measles/Mumps/Rubella)",
-				doses: "1st dose",
-				details: "Administer at 12–15 months.",
+				name: "Measles-Rubella (1st dose)",
+				details: "Administer at 9 months.",
+				description:
+					"MR vaccine protects against measles and rubella, two viral infections that can lead to serious complications.",
 			},
 			{
-				name: "Varicella (Chickenpox)",
-				doses: "1st dose",
-				details: "Administer at 12–15 months.",
-			},
-			{
-				name: "Hib (Haemophilus Influenza B)",
-				doses: "3rd dose",
-				details: "Administer at 12–15 months.",
-			},
-			{
-				name: "PCV13 (Pneumococcal)",
-				doses: "3rd dose",
-				details: "Administer at 12–15 months.",
+				name: "Japanese Encephalitis (1st dose)",
+				details: "Administer at 9 months.",
+				description:
+					"JE vaccine prevents Japanese Encephalitis, a viral brain infection transmitted by mosquitoes.",
 			},
 		],
 	},
 	{
-		ageRange: "15 – 18 months",
+		ageRange: "12 Months",
 		vaccines: [
 			{
-				name: "DTaP (Diphtheria/Tetanus/Pertussis)",
-				doses: "4th dose",
-				details: "Administer at 15–18 months.",
-			},
-			{
-				name: "IPV (Polio)",
-				doses: "3rd dose",
-				details: "Administer at 6–18 months.",
-			},
-		],
-	},
-	{
-		ageRange: "4 – 6 years",
-		vaccines: [
-			{
-				name: "DTaP (Diphtheria/Tetanus/Pertussis)",
-				doses: "5th dose",
-				details: "Administer at 4–6 years.",
-			},
-			{
-				name: "IPV (Polio)",
-				doses: "4th dose",
-				details: "Administer at 4–6 years.",
-			},
-			{
-				name: "MMR (Measles/Mumps/Rubella)",
-				doses: "2nd dose",
-				details: "Administer at 4–6 years.",
-			},
-			{
-				name: "Varicella (Chickenpox)",
-				doses: "2nd dose",
-				details: "Administer at 4–6 years.",
-			},
-		],
-	},
-	{
-		ageRange: "11 – 12 years",
-		vaccines: [
-			{
-				name: "Tdap (Tetanus/Diphtheria/Pertussis)",
-				doses: "1st dose",
-				details: "Administer at 11–12 years.",
-			},
-			{
-				name: "HPV (Human Papillomavirus)",
-				doses: "2 doses",
-				details:
-					"Administer at 11–12 years, with the second dose given 6–12 months after the first.",
-			},
-			{
-				name: "MCV4 (Meningococcal conjugate)",
-				doses: "1st dose",
-				details: "Administer at 11–12 years.",
-			},
-		],
-	},
-	{
-		ageRange: "16 years",
-		vaccines: [
-			{
-				name: "MCV4 (Meningococcal conjugate)",
-				doses: "2nd dose",
-				details: "Administer at 16 years.",
-			},
-			{
-				name: "Influenza",
-				doses: "1 dose",
-				details: "Administer annually.",
+				name: "Measles-Rubella (2nd dose)",
+				details: "Administer at 12 months.",
+				description:
+					"Second dose of MR vaccine ensures long-lasting protection against measles and rubella.",
 			},
 		],
 	},
